@@ -28,6 +28,6 @@ protected:
   virtual Real computeQpJacobian() override;
 
   const VariableValue & _cross_field;
-  const VariableValue & _coupled_variable;
+  const VariableValue & _coupled_variable_old;
   const unsigned _component;
 };
