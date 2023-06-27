@@ -7,51 +7,38 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "CrossField.h"
+#include "Flux.h"
 
-registerMooseObject("zebraApp", CrossField);
+registerMooseObject("zebraApp", Flux);
 
 InputParameters
-CrossField::validParams()
+Flux::validParams()
 {
   InputParameters params = Kernel::validParams();
   params.addClassDescription("The Laplacian operator ($-\\nabla \\cdot \\nabla u$), with the weak "
                              "form of $(\\nabla \\phi_i, \\nabla u_h)$.");
-  params.addRequiredCoupledVar("psi", "sheath closure");
+  params.addRequiredCoupledVar("cross_field_component", "cross field");
+  params.addRequiredCoupledVar("couple_variable", "couple_variable");
   params.addRequiredParam<unsigned>(
       "component",
       "0,1,2 depending on if we are solving the x,y,z component of the Corrector equation");
   return params;
 }
 
-CrossField::CrossField(const InputParameters & parameters) : Kernel(parameters),
- _grad_psi(coupledGradient("psi")),
- _B(getMaterialProperty<Real>("B")),
+Flux::Flux(const InputParameters & parameters) : Kernel(parameters),
+ _cross_field(coupledValueOld("cross_field_component")),
+ _coupled_variable(coupledValue("couple_variable")),
  _component(getParam<unsigned>("component"))
 {}
 
 Real
-CrossField::computeQpResidual()
+Flux::computeQpResidual()
 {
-  int i, j;
-
-  if(_component == 0)
-  {
-    i = 1;
-    j = 1;
-  }
-
-  if(_component == 1)
-  {
-    i = 0;
-    j = -1;
-  }
-
-  return _u[_qp] * _test[_i][_qp] - (1.0/_B[_qp]) * j * _grad_psi[_qp](i) * _test[_i][_qp];
+  return _u[_qp] * _test[_i][_qp] - _coupled_variable[_qp] * _cross_field[_qp] * _test[_i][_qp];
 }
 
 Real
-CrossField::computeQpJacobian()
+Flux::computeQpJacobian()
 {
   return _phi[_j][_qp] * _test[_i][_qp];
 }

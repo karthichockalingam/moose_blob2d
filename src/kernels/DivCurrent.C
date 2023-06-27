@@ -7,36 +7,35 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "DivFlux.h"
+#include "DivCurrent.h"
 
-registerMooseObject("zebraApp", DivFlux);
+registerMooseObject("zebraApp", DivCurrent);
 
 InputParameters
-DivFlux::validParams()
+DivCurrent::validParams()
 {
   InputParameters params = Kernel::validParams();
   params.addClassDescription("The Laplacian operator ($-\\nabla \\cdot \\nabla u$), with the weak "
                              "form of $(\\nabla \\phi_i, \\nabla u_h)$.");
-  params.addRequiredCoupledVar("jx", "flux in x-diretion");
-  params.addRequiredCoupledVar("jy", "flux in y-diretion");
-  params.addRequiredParam<Real>("e_value", "Value of e");
+  params.addRequiredCoupledVar("n", "electron density");
+  params.addRequiredCoupledVar("psi", "sheath closure");
   return params;
 }
 
-DivFlux::DivFlux(const InputParameters & parameters) : Kernel(parameters),
- _grad_jx(coupledGradient("jx")),
- _grad_jy(coupledGradient("jy")),
- _e_value(getParam<Real>("e_value"))
+DivCurrent::DivCurrent(const InputParameters & parameters) : Kernel(parameters),
+ _n_old(coupledValueOld("n")),
+ _psi(coupledValue("psi")),
+ _L(getMaterialProperty<Real>("L"))
 {}
 
 Real
-DivFlux::computeQpResidual()
+DivCurrent::computeQpResidual()
 {
-  return -(1.0/_e_value) * (_grad_jx[_qp](0) + _grad_jy[_qp](1)) *_test[_i][_qp];
+  return _u[_qp] * _test[_i][_qp] - (1.0/_L[_qp]) * _n_old[_qp] * _psi[_qp] * _test[_i][_qp];
 }
 
 Real
-DivFlux::computeQpJacobian()
+DivCurrent::computeQpJacobian()
 {
-  return 0.0;
+  return _phi[_j][_qp] * _test[_i][_qp];
 }

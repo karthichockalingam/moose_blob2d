@@ -7,51 +7,38 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "CrossField.h"
+#include "CurlbB.h"
 
-registerMooseObject("zebraApp", CrossField);
+registerMooseObject("zebraApp", CurlbB);
 
 InputParameters
-CrossField::validParams()
+CurlbB::validParams()
 {
   InputParameters params = Kernel::validParams();
   params.addClassDescription("The Laplacian operator ($-\\nabla \\cdot \\nabla u$), with the weak "
                              "form of $(\\nabla \\phi_i, \\nabla u_h)$.");
-  params.addRequiredCoupledVar("psi", "sheath closure");
+  params.addRequiredCoupledVar("n", "electron density");
   params.addRequiredParam<unsigned>(
       "component",
       "0,1,2 depending on if we are solving the x,y,z component of the Corrector equation");
   return params;
 }
 
-CrossField::CrossField(const InputParameters & parameters) : Kernel(parameters),
- _grad_psi(coupledGradient("psi")),
- _B(getMaterialProperty<Real>("B")),
- _component(getParam<unsigned>("component"))
+CurlbB::CurlbB(const InputParameters & parameters) : Kernel(parameters),
+ _grad_n_old(coupledGradientOld("n")),
+ _e(getMaterialProperty<Real>("e")),
+ _T(getMaterialProperty<Real>("T")),
+ _R(getMaterialProperty<Real>("R"))
 {}
 
 Real
-CrossField::computeQpResidual()
+CurlbB::computeQpResidual()
 {
-  int i, j;
-
-  if(_component == 0)
-  {
-    i = 1;
-    j = 1;
-  }
-
-  if(_component == 1)
-  {
-    i = 0;
-    j = -1;
-  }
-
-  return _u[_qp] * _test[_i][_qp] - (1.0/_B[_qp]) * j * _grad_psi[_qp](i) * _test[_i][_qp];
+  return -((_e[_qp] * _T[_qp])/(_R[_qp] * _R[_qp])) * _grad_n_old[_qp](1) * _test[_i][_qp];
 }
 
 Real
-CrossField::computeQpJacobian()
+CurlbB::computeQpJacobian()
 {
-  return _phi[_j][_qp] * _test[_i][_qp];
+  return 0.0;
 }

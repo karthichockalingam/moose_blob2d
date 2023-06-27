@@ -9,25 +9,27 @@
 
 #pragma once
 
+
 #include "Kernel.h"
 
 /**
  * This kernel implements the Laplacian operator:
  * $\nabla u \cdot \nabla \phi_i$
  */
-class DivFlux : public Kernel
-{
+class CurlbB : public Kernel
+{ 
 public:
   static InputParameters validParams();
 
-  DivFlux(const InputParameters & parameters);
+  CurlbB(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual() override;
 
   virtual Real computeQpJacobian() override;
 
-  const VariableGradient & _grad_jx;
-  const VariableGradient & _grad_jy;
-  const Real _e_value;
+  const VariableGradient & _grad_n_old;
+  const MaterialProperty<Real> & _e;
+  const MaterialProperty<Real> & _T;
+  const MaterialProperty<Real> & _R;
 };

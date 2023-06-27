@@ -15,19 +15,19 @@
  * This kernel implements the Laplacian operator:
  * $\nabla u \cdot \nabla \phi_i$
  */
-class DivFlux : public Kernel
+class Flux : public Kernel
 {
 public:
   static InputParameters validParams();
 
-  DivFlux(const InputParameters & parameters);
+  Flux(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual() override;
 
   virtual Real computeQpJacobian() override;
 
-  const VariableGradient & _grad_jx;
-  const VariableGradient & _grad_jy;
-  const Real _e_value;
+  const VariableValue & _cross_field;
+  const VariableValue & _coupled_variable;
+  const unsigned _component;
 };
