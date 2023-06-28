@@ -25,7 +25,7 @@ CurlbB::validParams()
 }
 
 CurlbB::CurlbB(const InputParameters & parameters) : Kernel(parameters),
- _grad_n_old(coupledGradientOld("n")),
+ _grad_n(coupledGradient("n")),
  _e(getMaterialProperty<Real>("e")),
  _T(getMaterialProperty<Real>("T")),
  _R(getMaterialProperty<Real>("R"))
@@ -34,7 +34,7 @@ CurlbB::CurlbB(const InputParameters & parameters) : Kernel(parameters),
 Real
 CurlbB::computeQpResidual()
 {
-  return -((_e[_qp] * _T[_qp])/(_R[_qp] * _R[_qp])) * _grad_n_old[_qp](1) * _test[_i][_qp];
+  return -((_e[_qp] * _T[_qp])/(_R[_qp] * _R[_qp])) * _grad_n[_qp](1) * _test[_i][_qp];
 }
 
 Real

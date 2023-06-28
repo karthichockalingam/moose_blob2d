@@ -27,7 +27,7 @@ protected:
 
   virtual Real computeQpJacobian() override;
 
-  const VariableValue & _n_old;
+  const VariableValue & _n;
   const VariableValue & _psi;
   const MaterialProperty<Real> & _L;
 };

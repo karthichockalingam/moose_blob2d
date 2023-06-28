@@ -27,14 +27,14 @@ Flux::validParams()
 
 Flux::Flux(const InputParameters & parameters) : Kernel(parameters),
  _cross_field(coupledValue("cross_field_component")),
- _coupled_variable_old(coupledValueOld("couple_variable")),
+ _coupled_variable(coupledValue("couple_variable")),
  _component(getParam<unsigned>("component"))
 {}
 
 Real
 Flux::computeQpResidual()
 {
-  return _u[_qp] * _test[_i][_qp] - _coupled_variable_old[_qp] * _cross_field[_qp] * _test[_i][_qp];
+  return _u[_qp] * _test[_i][_qp] - _coupled_variable[_qp] * _cross_field[_qp] * _test[_i][_qp];
 }
 
 Real

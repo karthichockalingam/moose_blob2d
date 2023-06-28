@@ -23,7 +23,7 @@ DivCurrent::validParams()
 }
 
 DivCurrent::DivCurrent(const InputParameters & parameters) : Kernel(parameters),
- _n_old(coupledValueOld("n")),
+ _n(coupledValue("n")),
  _psi(coupledValue("psi")),
  _L(getMaterialProperty<Real>("L"))
 {}
@@ -31,7 +31,7 @@ DivCurrent::DivCurrent(const InputParameters & parameters) : Kernel(parameters),
 Real
 DivCurrent::computeQpResidual()
 {
-  return _u[_qp] * _test[_i][_qp] - (1.0/_L[_qp]) * _n_old[_qp] * _psi[_qp] * _test[_i][_qp];
+  return _u[_qp] * _test[_i][_qp] - (1.0/_L[_qp]) * _n[_qp] * _psi[_qp] * _test[_i][_qp];
 }
 
 Real

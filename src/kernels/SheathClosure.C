@@ -22,14 +22,14 @@ SheathClosure::validParams()
 }
 
 SheathClosure::SheathClosure(const InputParameters & parameters) : Kernel(parameters),
- _w_old(coupledValueOld("w_old")),
+ _w(coupledValue("w")),
  _B(getMaterialProperty<Real>("B"))
 {}
 
 Real
 SheathClosure::computeQpResidual()
 {
-  return (1.0/(_B[_qp] * _B[_qp])) * _grad_u[_qp] * _grad_test[_i][_qp] + _w_old[_qp] * _test[_i][_qp];
+  return (1.0/(_B[_qp] * _B[_qp])) * _grad_u[_qp] * _grad_test[_i][_qp] + _w[_qp] * _test[_i][_qp];
 }
 
 Real
