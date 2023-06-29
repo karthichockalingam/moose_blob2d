@@ -19,16 +19,12 @@ Flux::validParams()
                              "form of $(\\nabla \\phi_i, \\nabla u_h)$.");
   params.addRequiredCoupledVar("cross_field_component", "cross field");
   params.addRequiredCoupledVar("couple_variable", "couple_variable");
-  params.addRequiredParam<unsigned>(
-      "component",
-      "0,1,2 depending on if we are solving the x,y,z component of the Corrector equation");
   return params;
 }
 
 Flux::Flux(const InputParameters & parameters) : Kernel(parameters),
  _cross_field(coupledValue("cross_field_component")),
- _coupled_variable(coupledValue("couple_variable")),
- _component(getParam<unsigned>("component"))
+ _coupled_variable(coupledValue("couple_variable"))
 {}
 
 Real

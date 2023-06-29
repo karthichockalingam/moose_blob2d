@@ -29,5 +29,4 @@ protected:
 
   const VariableValue & _cross_field;
   const VariableValue & _coupled_variable;
-  const unsigned _component;
 };
