@@ -24,7 +24,8 @@ DivCurrentSource::validParams()
 
 DivCurrentSource::DivCurrentSource(const InputParameters & parameters) : Kernel(parameters),
  _div_current(coupledValue("div_current")),
- _e_value(getParam<Real>("e_value"))
+ _e_value(getParam<Real>("e_value")),
+ _div_current_var(coupled("div_current"))
 {}
 
 Real
@@ -36,5 +37,15 @@ DivCurrentSource::computeQpResidual()
 Real
 DivCurrentSource::computeQpJacobian()
 {
+  return 0.0;
+}
+
+
+Real
+DivCurrentSource::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  if ( _div_current_var == jvar) 
+    return -(1.0/_e_value) * _phi[_j][_qp] * _test[_i][_qp];
+
   return 0.0;
 }

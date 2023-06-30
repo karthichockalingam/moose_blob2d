@@ -27,6 +27,10 @@ protected:
 
   virtual Real computeQpJacobian() override;
 
+  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
+
   const VariableValue & _cross_field;
-  const VariableValue & _coupled_variable;
+  const VariableValue & _coupled_variable_old;
+
+  unsigned int _coupled_var;
 };

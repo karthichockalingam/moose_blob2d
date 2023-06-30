@@ -24,17 +24,28 @@ Flux::validParams()
 
 Flux::Flux(const InputParameters & parameters) : Kernel(parameters),
  _cross_field(coupledValue("cross_field_component")),
- _coupled_variable(coupledValue("couple_variable"))
+ _coupled_variable_old(coupledValueOld("couple_variable")),
+ _coupled_var(coupled("couple_variable"))
 {}
 
 Real
 Flux::computeQpResidual()
 {
-  return _u[_qp] * _test[_i][_qp] - _coupled_variable[_qp] * _cross_field[_qp] * _test[_i][_qp];
+  return _u[_qp] * _test[_i][_qp] - _coupled_variable_old[_qp] * _cross_field[_qp] * _test[_i][_qp];
 }
 
 Real
 Flux::computeQpJacobian()
 {
   return _phi[_j][_qp] * _test[_i][_qp];
+}
+
+
+Real
+Flux::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  if ( _coupled_var == jvar) 
+    return - _coupled_variable_old[_qp] * _phi[_j][_qp] * _test[_i][_qp];
+  
+  return 0.0;
 }

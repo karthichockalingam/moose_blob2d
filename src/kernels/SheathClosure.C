@@ -23,7 +23,8 @@ SheathClosure::validParams()
 
 SheathClosure::SheathClosure(const InputParameters & parameters) : Kernel(parameters),
  _w(coupledValue("w")),
- _B(getMaterialProperty<Real>("B"))
+ _B(getMaterialProperty<Real>("B")),
+ _w_var(coupled("w"))
 {}
 
 Real
@@ -36,4 +37,13 @@ Real
 SheathClosure::computeQpJacobian()
 {
   return (1.0/(_B[_qp] * _B[_qp])) * _grad_phi[_j][_qp] * _grad_test[_i][_qp];
+}
+
+Real
+SheathClosure::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  if (_w_var == jvar) 
+    return _phi[_j][_qp] * _test[_i][_qp];
+  
+  return 0.0;
 }

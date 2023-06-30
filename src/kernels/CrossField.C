@@ -27,7 +27,8 @@ CrossField::validParams()
 CrossField::CrossField(const InputParameters & parameters) : Kernel(parameters),
  _grad_psi(coupledGradient("psi")),
  _B(getMaterialProperty<Real>("B")),
- _component(getParam<unsigned>("component"))
+ _component(getParam<unsigned>("component")),
+ _psi_var(coupled("psi"))
 {}
 
 Real
@@ -54,4 +55,28 @@ Real
 CrossField::computeQpJacobian()
 {
   return _phi[_j][_qp] * _test[_i][_qp];
+}
+
+
+Real
+CrossField::computeQpOffDiagJacobian(unsigned int jvar)
+{
+    int i, j;
+
+    if(_component == 0)
+  {
+    i = 1;
+    j = 1;
+  }
+
+  if(_component == 1)
+  {
+    i = 0;
+    j = -1;
+  }
+
+  if (_psi_var == jvar) 
+    return - (1.0/_B[_qp]) * j * _grad_phi[_j][_qp](i) * _test[_i][_qp];
+  
+  return 0.0;
 }

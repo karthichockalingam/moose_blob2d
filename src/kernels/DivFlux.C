@@ -24,7 +24,9 @@ DivFlux::validParams()
 
 DivFlux::DivFlux(const InputParameters & parameters) : Kernel(parameters),
  _grad_jx(coupledGradient("jx")),
- _grad_jy(coupledGradient("jy"))
+ _grad_jy(coupledGradient("jy")),
+ _jx_var(coupled("jx")),
+ _jy_var(coupled("jy"))
 {}
 
 Real
@@ -36,5 +38,17 @@ DivFlux::computeQpResidual()
 Real
 DivFlux::computeQpJacobian()
 {
+  return 0.0;
+}
+
+Real
+DivFlux::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  if ( _jx_var == jvar) 
+    return _grad_phi[_j][_qp](0) * _test[_i][_qp];
+
+  if ( _jy_var == jvar) 
+    return _grad_phi[_j][_qp](1) * _test[_i][_qp];
+
   return 0.0;
 }

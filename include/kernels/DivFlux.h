@@ -27,6 +27,11 @@ protected:
 
   virtual Real computeQpJacobian() override;
 
+  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
+
   const VariableGradient & _grad_jx;
   const VariableGradient & _grad_jy;
+
+  unsigned int _jx_var;
+  unsigned int _jy_var;
 };

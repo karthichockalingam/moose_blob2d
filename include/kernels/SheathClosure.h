@@ -27,6 +27,9 @@ protected:
 
   virtual Real computeQpJacobian() override;
 
+  virtual Real computeQpOffDiagJacobian(unsigned jvar) override;
+
   const VariableValue & _w;
   const MaterialProperty<Real> & _B;
+  unsigned int _w_var;
 };

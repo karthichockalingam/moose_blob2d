@@ -23,19 +23,30 @@ DivCurrent::validParams()
 }
 
 DivCurrent::DivCurrent(const InputParameters & parameters) : Kernel(parameters),
- _n(coupledValue("n")),
+ _n_old(coupledValueOld("n")),
  _psi(coupledValue("psi")),
- _L(getMaterialProperty<Real>("L"))
+ _L(getMaterialProperty<Real>("L")),
+ _psi_var(coupled("psi"))
 {}
 
 Real
 DivCurrent::computeQpResidual()
 {
-  return _u[_qp] * _test[_i][_qp] - (1.0/_L[_qp]) * _n[_qp] * _psi[_qp] * _test[_i][_qp];
+  return _u[_qp] * _test[_i][_qp] - (1.0/_L[_qp]) * _n_old[_qp] * _psi[_qp] * _test[_i][_qp];
 }
 
 Real
 DivCurrent::computeQpJacobian()
 {
   return _phi[_j][_qp] * _test[_i][_qp];
+}
+
+
+Real
+DivCurrent::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  if (_psi_var == jvar) 
+    return - (1.0/_L[_qp]) * _n_old[_qp] * _phi[_j][_qp] * _test[_i][_qp]; 
+  
+  return 0.0;
 }
