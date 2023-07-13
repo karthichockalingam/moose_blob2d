@@ -225,7 +225,7 @@
 [Outputs]
   # execute_on = 'timestep_end'
   exodus = true
-  interval = 100
+  interval = 1
 []
 
 

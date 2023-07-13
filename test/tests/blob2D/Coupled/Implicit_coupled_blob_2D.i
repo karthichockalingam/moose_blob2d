@@ -208,8 +208,8 @@
 [Executioner]
   type = Transient   # Here we use the Transient Executioner (instead of steady)
   solve_type = 'NEWTON'
-  num_steps = 10000
-
+  num_steps = 40000
+  line_search = 'none'
   petsc_options_iname = '-pc_type -pc_hypre_type -ksp_norm_type'
   petsc_options_value = 'hypre    boomeramg         preconditioned'
 
@@ -225,7 +225,7 @@
 [Outputs]
   # execute_on = 'timestep_end'
   exodus = true
-  interval = 1
+  interval = 500
 []
 
 
